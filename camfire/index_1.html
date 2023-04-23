@@ -5,19 +5,32 @@
 		<style>
 			canvas {
 				border: 1px solid black;
+				position: absolute;
+				top: 0;
+				left: 0;
 			}
 		</style>
 	</head>
 	<body>
+		<canvas id="canvas2" width="512" height="512"></canvas>
 		<canvas id="canvas" width="512" height="512"></canvas>
 		<script>
 			var canvas = document.getElementById("canvas");
-			var ctx = canvas.getContext("2d");
+			var ctx1 = canvas.getContext("2d");
+			ctx1.fillStyle = 'rgba(0, 0, 0, 0.5)'; // transparente Hintergrundfarbe
+			
+			var canvas2 = document.getElementById('canvas2');
+			var ctx2 = canvas2.getContext('2d');
+			var imgbg = new Image();
+			imgbg.onload = function() {
+				ctx2.drawImage(imgbg, 0, 0); // Bild als Hintergrund zeichnen
+			};
+			imgbg.src = 'https://raw.githubusercontent.com/costin89/QA/main/camfire/proto.gif';
 			
 			// Lade die PNG-Bilder
 			var images = [];
 			var loadedImages = 0;
-			var imgUrls = ["1.png", "2.png", "3.png", "4.png"];
+			var imgUrls = ["https://raw.githubusercontent.com/costin89/QA/main/camfire/1.png", "https://raw.githubusercontent.com/costin89/QA/main/camfire/2.png", "https://raw.githubusercontent.com/costin89/QA/main/camfire/3.png", "https://raw.githubusercontent.com/costin89/QA/main/camfire/4.png","https://raw.githubusercontent.com/costin89/QA/main/camfire/l.png"];
 			
 			for (var i = 0; i < imgUrls.length; i++) {
 				var img = new Image();
@@ -35,16 +48,17 @@
 			// Zeichne die Rechtecke
 			function drawRectangles() {
 				var rectangles = [
-					{ x: 50, y: 50, width: 50, height: 50},
+					{ x: 50, y: 50, width: 100, height: 100},
 					{ x: 200, y: 50, width: 100, height: 100 },
 					{ x: 50, y: 200, width: 100, height: 100 },
-					{ x: 200, y: 200, width: 100, height: 100 }
+					{ x: 300, y: 250, width: 100, height: 100 },
+					{ x: 150, y: 150, width: 150, height:150 }
 				];
 				
 				for (var i = 0; i < rectangles.length; i++) {
 					var rect = rectangles[i];
 					var img = images[i];
-					ctx.drawImage(img, rect.x, rect.y, rect.width, rect.height);
+					ctx1.drawImage(img, rect.x, rect.y, rect.width, rect.height);
 				}
 				
 				// Füge Event Listener für Mausbewegungen hinzu
@@ -94,11 +108,11 @@
 				
 				// Zeichne die Rechtecke neu
 				function redraw() {
-					ctx.clearRect(0, 0, canvas.width, canvas.height);
+					ctx1.clearRect(0, 0, canvas.width, canvas.height);
 					for (var i = 0; i < rectangles.length; i++) {
 						var rect = rectangles[i];
 						var img = images[i];
-						ctx.drawImage(img, rect.x, rect.y, rect.width, rect.height);
+						ctx1.drawImage(img, rect.x, rect.y, rect.width, rect.height);
 					}
 				}
 			}
