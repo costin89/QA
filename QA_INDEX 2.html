@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>Inputfeld-Generator</title>
+		<style>
+			.input-field {
+				margin: 10px 0;
+			}
+			.input-field label {
+				display: block;
+				margin-bottom: 5px;
+			}
+			.input-field input {
+				display: block;
+				width: 100%;
+			}
+		</style>
+		<script>
+			let counter = 0;
+			//let data = [];
+			
+			function addFields() {
+				// Container für die Inputfelder auswählen
+				var container = document.getElementById("inputContainer");
+				
+				// Inputfelder generieren und hinzufügen
+				for (i = 0; i < 1; i++) {
+					// Neue Div-Elemente für die Inputfelder generieren
+					var div = document.createElement("div");
+					div.className = "input-field";
+					
+					// Frage-Inputfeld generieren und hinzufügen
+					var label = document.createElement("label");
+					label.innerHTML = "Frage " + (i + 1 + counter) + ":";
+					var input = document.createElement("input");
+					input.type = "text";
+					input.name = "frage" + i;
+					div.appendChild(label);
+					div.appendChild(input);
+					counter = counter + 1;
+					
+					// Antwort-Inputfelder generieren und hinzufügen
+					for (j = 1; j <= 4; j++) {
+						var label = document.createElement("label");
+						label.innerHTML = "Antwort " + j + ":";
+						var input = document.createElement("input");
+						input.type = "text";
+						input.name = "antwort" + j + "_" + i;
+						div.appendChild(label);
+						div.appendChild(input);
+					}
+					
+					// Inputfelder zur Seite hinzufügen
+					container.appendChild(div);
+				}
+			}
+			
+			function saveFields() {
+				// Alle Input-Felder auswählen
+				var inputs = document.querySelectorAll('input[type="text"]');
+				
+				// JSON-Objekt zum Speichern der Fragen und Antworten erstellen
+				var data = {};
+				
+				// Iteriere über alle Input-Felder und füge sie dem JSON-Objekt hinzu
+				inputs.forEach(function(input) {
+					var name = input.name;
+					var value = input.value;
+					
+					// Prüfen, ob das Input-Feld eine Frage ist
+					if (name.startsWith("frage")) {
+						// Neue Frage zum JSON-Objekt hinzufügen
+						var questionNumber = name.replace("frage", "");
+						data["F_" + questionNumber] = value;
+						
+						// Antworten zur aktuellen Frage zum JSON-Objekt hinzufügen
+						for (var i = 1; i <= 4; i++) {
+							var answerName = "antwort" + i + "_" + questionNumber;
+							var answerInput = document.querySelector('input[name="' + answerName + '"]');
+							data["A_" + i + "_" + questionNumber] = answerInput.value;
+						}
+					}
+				});
+				
+				// JSON-Objekt in String konvertieren und in Datei speichern
+				var jsonData = JSON.stringify(data, null, 2);
+				var blob = new Blob([jsonData], { type: "application/json" });
+				var url = URL.createObjectURL(blob);
+				var link = document.createElement("a");
+				link.setAttribute("href", url);
+				link.setAttribute("download", "fragen-und-antworten.json");
+				link.click();
+			}
+		</script>
+</head>
+<body>
+	<h1>Inputfeld-Generator</h1>
+
+	<!-- Button zum Generieren der Inputfelder -->
+	<button onclick="addFields()">Neue Frage</button>
+	<button onclick="saveFields()">Save</button>
+	<!-- Container für die Inputfelder -->
+	<div id="inputContainer"></div>
+</body>
+</html>
