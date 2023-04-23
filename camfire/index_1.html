@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>Canvas Beispiel</title>
+		<style>
+			canvas {
+				border: 1px solid black;
+			}
+		</style>
+	</head>
+	<body>
+		<canvas id="canvas" width="512" height="512"></canvas>
+		<script>
+			var canvas = document.getElementById("canvas");
+			var ctx = canvas.getContext("2d");
+			
+			// Lade die PNG-Bilder
+			var images = [];
+			var loadedImages = 0;
+			var imgUrls = ["1.png", "2.png", "3.png", "4.png"];
+			
+			for (var i = 0; i < imgUrls.length; i++) {
+				var img = new Image();
+				img.onload = function() {
+					loadedImages++;
+					if (loadedImages === imgUrls.length) {
+						// Wenn alle Bilder geladen sind, zeichne die Rechtecke
+						drawRectangles();
+					}
+				};
+				img.src = imgUrls[i];
+				images.push(img);
+			}
+			
+			// Zeichne die Rechtecke
+			function drawRectangles() {
+				var rectangles = [
+					{ x: 50, y: 50, width: 50, height: 50},
+					{ x: 200, y: 50, width: 100, height: 100 },
+					{ x: 50, y: 200, width: 100, height: 100 },
+					{ x: 200, y: 200, width: 100, height: 100 }
+				];
+				
+				for (var i = 0; i < rectangles.length; i++) {
+					var rect = rectangles[i];
+					var img = images[i];
+					ctx.drawImage(img, rect.x, rect.y, rect.width, rect.height);
+				}
+				
+				// Füge Event Listener für Mausbewegungen hinzu
+				canvas.addEventListener("mousemove", function(event) {
+					var rectIndex = getRectangleIndex(event.clientX, event.clientY);
+					if (rectIndex !== -1) {
+						canvas.style.cursor = "move";
+					} else {
+						canvas.style.cursor = "default";
+					}
+				});
+				
+				canvas.addEventListener("mousedown", function(event) {
+					var rectIndex = getRectangleIndex(event.clientX, event.clientY);
+					if (rectIndex !== -1) {
+						canvas.style.cursor = "grabbing";
+						canvas.addEventListener("mousemove", moveRectangle);
+						canvas.addEventListener("mouseup", function() {
+							canvas.style.cursor = "move";
+							canvas.removeEventListener("mousemove", moveRectangle);
+						});
+					}
+				});
+				
+				// Finde das Rechteck, das die Mausposition enthält
+				function getRectangleIndex(x, y) {
+					for (var i = 0; i < rectangles.length; i++) {
+						var rect = rectangles[i];
+						if (x >= rect.x && x <= rect.x + rect.width &&
+							y >= rect.y && y <= rect.y + rect.height) {
+								return i;
+							}
+					}
+					return -1;
+				}
+				
+				// Verschiebe das Rechteck, das gerade ausgewählt wurde
+				function moveRectangle(event) {
+					var rectIndex = getRectangleIndex(event.clientX, event.clientY);
+					if (rectIndex !== -1) {
+						var rect = rectangles[rectIndex];
+						rect.x = event.clientX - rect.width / 2;
+						rect.y = event.clientY - rect.height / 2;
+						redraw();
+					}
+				}
+				
+				// Zeichne die Rechtecke neu
+				function redraw() {
+					ctx.clearRect(0, 0, canvas.width, canvas.height);
+					for (var i = 0; i < rectangles.length; i++) {
+						var rect = rectangles[i];
+						var img = images[i];
+						ctx.drawImage(img, rect.x, rect.y, rect.width, rect.height);
+					}
+				}
+			}
+		</script>
+	</body>
+</html>
