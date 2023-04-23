@@ -30,7 +30,7 @@
 			const jsonData = JSON.stringify(data);
 			console.log(jsonData); // kann zum Debuggen genutzt werden
 
-			// Hier kann der JSON-String gespeichert oder weiterverarbeitet werden
+			localStorage.setItem("zeitangaben", jsonData); // speichert Daten im localStorage
 		}
 	</script>
 </body>
