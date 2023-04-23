@@ -2,35 +2,38 @@
 <html>
 <head>
 	<meta charset="UTF-8">
-	<title>Zeitangaben</title>
+	<title>Zeitplanung</title>
 </head>
 <body>
-	<h1>Zeitangaben</h1>
-	<form id="zeit-form">
-		<label for="zeit-auswahl">Zeit zur Auswahl:</label>
-		<input type="number" id="zeit-auswahl" name="zeit-auswahl" min="0">
-		<br>
-		<label for="zeit-austausch">Zeit zum Austausch:</label>
-		<input type="number" id="zeit-austausch" name="zeit-austausch" min="0">
-		<br><br>
-		<button type="button" onclick="saveData()">Save</button>
+	<form>
+		<label for="zeit-zur-auswahl">Zeit zur Auswahl:</label>
+		<input type="number" id="zeit-zur-auswahl" name="zeit-zur-auswahl" required>
+		<label for="zeit-zum-austausch">Zeit zum Austausch:</label>
+		<input type="number" id="zeit-zum-austausch" name="zeit-zum-austausch" required>
+		<button type="button" onclick="saveToJson()">Save</button>
 	</form>
 
 	<script>
-		function saveData() {
-			const zeitForm = document.getElementById("zeit-form");
-			const zeitAuswahl = zeitForm.elements["zeit-auswahl"].value;
-			const zeitAustausch = zeitForm.elements["zeit-austausch"].value;
+		function saveToJson() {
+			const zeitZurAuswahl = document.getElementById("zeit-zur-auswahl").value;
+			const zeitZumAustausch = document.getElementById("zeit-zum-austausch").value;
 
 			const data = {
-				"zeit-auswahl": zeitAuswahl,
-				"zeit-austausch": zeitAustausch
+				"Zeit zur Auswahl": zeitZurAuswahl,
+				"Zeit zum Austausch": zeitZumAustausch
 			};
 
 			const jsonData = JSON.stringify(data);
-			console.log(jsonData); // kann zum Debuggen genutzt werden
+			const blob = new Blob([jsonData], {type: "application/json"});
+			const url = URL.createObjectURL(blob);
 
-			localStorage.setItem("zeitangaben", jsonData); // speichert Daten im localStorage
+			const a = document.createElement("a");
+			a.href = url;
+			a.download = "zeitplanung.json";
+			document.body.appendChild(a);
+			a.click();
+			document.body.removeChild(a);
+			URL.revokeObjectURL(url);
 		}
 	</script>
 </body>
