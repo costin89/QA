@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <title>Projekt erstellen</title>
+  </head>
+  <body>
+    <label for="projektname">Projektname:</label>
+    <input type="text" id="projektname"><br><br>
+    <button onclick="erstelleProjekt()">Projekt erstellen</button>
+
+    <script>
+      function erstelleProjekt() {
+        // Name des Projekts aus dem Inputfeld lesen
+        const projektname = document.getElementById("projektname").value;
+
+        // Ordnerstruktur erstellen
+        const ordner = {
+          name: projektname,
+          ordner: [
+            {
+              name: "json"
+            },
+            {
+              name: "users"
+            },
+            {
+              name: "map"
+            }
+          ]
+        };
+
+        // Ordnerstruktur in JSON-Datei konvertieren
+        const data = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(ordner));
+
+        // Link zum Herunterladen der JSON-Datei erstellen
+        const link = document.createElement("a");
+        link.setAttribute("href", data);
+        link.setAttribute("download", projektname + ".json");
+
+        // Link anklicken, um Datei herunterzuladen
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+      }
+    </script>
+  </body>
+</html>
